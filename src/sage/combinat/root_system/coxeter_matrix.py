@@ -19,6 +19,7 @@ Coxeter Matrices
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.combinat.combination import Combinations
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
