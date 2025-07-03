@@ -1013,7 +1013,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
             [1, 2]  [1, 3]  [1, 4]
             [2, 1], [3, 1], [4, 1] 
         """
-        n = Matrix(self).nrows()
+        n = matrix(self).nrows()
         C = Combinations(range(n), a)
 
         for comb in C:
