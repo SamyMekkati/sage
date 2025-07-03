@@ -1018,7 +1018,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
 
         for comb in C:
             actual = [i for i in range(n) if i not in comb] # look at filter
-            submat = Matrix(self)[actual, actual]
+            submat = matrix(self)[actual, actual]
             yield CoxeterMatrix(submat)
 
     def level(self):
