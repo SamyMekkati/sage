@@ -1038,12 +1038,12 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
             2
         """
         n = len(self.index_set())
-        if is_level_0(self):
+        if self.is_level_0():
             return 0
         else:
             for i in range(1, n):
-                subgraphs = delete_nodes(self, i)
-                if all(is_level_0(coxeter_matrix) for coxeter_matrix in subgraphs):
+                subgraphs = self.delete_nodes(i)
+                if all(coxeter_matrix.is_level_0() for coxeter_matrix in subgraphs):
                     return i
 
 
