@@ -696,12 +696,32 @@ def Polyhedron(vertices=None, rays=None, lines=None,
     ambient_dim = deduced_ambient_dim
 
     # figure out base_ring
+    base_ring = find_base_ring(vertices, rays, lines, ieqs, eqns, got_Vrep, got_Hrep)
+
+    # Add the origin if necessary
+    if got_Vrep and len(vertices) == 0 and bool(rays + lines):
+        vertices = [[0] * ambient_dim]
+
+    # Specific backends can override the base_ring
+    from sage.geometry.polyhedron.parent import Polyhedra
+    parent = Polyhedra(base_ring, ambient_dim, backend=backend)
+    base_ring = parent.base_ring()
+
+    # finally, construct the Polyhedron
+    Hrep = Vrep = None
+    if got_Hrep:
+        Hrep = [ieqs, eqns]
+    if got_Vrep:
+        Vrep = [vertices, rays, lines]
+    return parent(Vrep, Hrep, convert=convert, verbose=verbose, mutable=mutable)
+
+def find_base_ring(vertices, rays, lines, ieqs, eqns, got_Vrep=False, got_Hrep=False):
     from sage.misc.flatten import flatten
     from sage.structure.element import parent
     from sage.categories.fields import Fields
     from sage.categories.rings import Rings
 
-    values = flatten(vertices + rays + lines + ieqs + eqns)
+    values = flatten(base_ring, vertices + rays + lines + ieqs + eqns)
     if base_ring is not None:
         convert = any(parent(x) is not base_ring for x in values)
     elif not values:
@@ -753,20 +773,4 @@ def Polyhedron(vertices=None, rays=None, lines=None,
                 convert = True
             elif base_ring is not RDF:
                 raise ValueError("the only allowed inexact ring is 'RDF' with backend 'cdd'")
-
-    # Add the origin if necessary
-    if got_Vrep and len(vertices) == 0 and bool(rays + lines):
-        vertices = [[0] * ambient_dim]
-
-    # Specific backends can override the base_ring
-    from sage.geometry.polyhedron.parent import Polyhedra
-    parent = Polyhedra(base_ring, ambient_dim, backend=backend)
-    base_ring = parent.base_ring()
-
-    # finally, construct the Polyhedron
-    Hrep = Vrep = None
-    if got_Hrep:
-        Hrep = [ieqs, eqns]
-    if got_Vrep:
-        Vrep = [vertices, rays, lines]
-    return parent(Vrep, Hrep, convert=convert, verbose=verbose, mutable=mutable)
+        return base_ring

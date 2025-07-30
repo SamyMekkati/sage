@@ -659,6 +659,59 @@ class Polyhedron_base5(Polyhedron_base4):
         parent = self.parent().change_ring(self.base_ring(), ambient_dim=self.ambient_dim() + n)
         return parent.element_class(parent, [lambda_V, [], []], None)
 
+    def lineup_polytope(self, r, weights=None):
+        r"""
+        Docstring to do ! 
+        """
+        from sage.geometry.polyhedron.constructor import find_base_ring
+
+        if weights is None:
+            denominator = QQ(r * (r + 1) / 2)
+            weights = [(QQ(r - i + 1) / denominator) for i in range(1, r + 1)]
+
+        if r < 1 or r > len(self.vertices()):
+            raise ValueError("r must be between 1 and the number of vertices of self")
+
+        if len(weights) != r:
+            raise ValueError("weights must have the same length as r")
+        
+
+        def lineup_list(self, r):
+
+            #Initial Polytope
+            G = self.graph()
+
+            vertex_list = list(G.vertices())
+            permutation_list = []
+
+            def recursive_path(path, visited):
+                if len(path) == r: #Then we have a valid path/lineup
+                    permutation_list.append(path[:])
+                    return
+                neighbors = set() #the set of all neighbors of the vertices in the current path
+                for v in path:
+                    neighbors.update(G.neighbors(v)) #we update the neighbors with all neighbors of the path
+                candidates = neighbors - visited 
+                for neighbor in candidates:
+                    path.append(neighbor)
+                    visited.add(neighbor)
+                    recursive_path(path, visited)
+                    path.pop() #removing the last vertex from the path
+                    visited.remove(neighbor) #removing the last vertex from the visited set
+
+            for start in vertex_list:
+                recursive_path([start], {start})
+
+            return permutation_list
+
+        lineups = lineup_list(self, r)
+
+        occupation_vectors = [sum(weights[i] * vector(lineup[i]) for i in range(r)) for lineup in lineups]
+
+        base_ring = find_base_ring(self.base_ring(), occupation_vectors)
+        parent = self.parent().change_ring(base_ring, ambient_dim=self.ambient_dim())
+        return parent.element_class(parent, [occupation_vectors, [], []], None)
+
     ###########################################################
     # Binary operations.
     ###########################################################

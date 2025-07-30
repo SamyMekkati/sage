@@ -30,8 +30,10 @@ from sage.structure.sage_object import SageObject
 from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 from sage.misc.lazy_import import lazy_import
 
+
 lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicField')
 lazy_import('sage.combinat.root_system.type_hyperbolic', 'CoxeterType_Hyperbolic')
+lazy_import('sage.combinat.root_system.type_hyperbolic2', 'CoxeterType_Level2_Hyperbolic')
 
 
 class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
@@ -56,13 +58,11 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         if isinstance(x, CoxeterType):
             return x
 
-        if (
-            isinstance(x, (list, tuple))
-            and (
-                x[0] == "Hyperbolic" or x[0] in hyperbolic_prefix
-                )
-        ):
+        if (isinstance(x, (list, tuple)) and (x[0] == "Hyperbolic" or x[0] in hyperbolic_prefix)):
             return CoxeterType_Hyperbolic(x)
+        
+        if isinstance(x, (list, tuple)) and len(x) == 3 and x[0] in ["K4", "K4dK2", "K23", "C", "T", "Ct", "Cktt", "Ckt2", "CC"]:
+            return CoxeterType_Level2_Hyperbolic(x)
 
         try:
             return CoxeterTypeFromCartanType(CartanType(x))
