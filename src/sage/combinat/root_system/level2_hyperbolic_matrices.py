@@ -1,5 +1,5 @@
 """
-Hyperbolic level 2 Coxeter Matrices Database
+Level 2 Coxeter Matrices Database
 
 These matrices are defined by their position in the following
 article [reference].
