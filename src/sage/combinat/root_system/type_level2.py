@@ -1,5 +1,5 @@
 """
-Hyperbolic Coxeter types.
+Level 2 minimal Coxeter types.
 """
 # ****************************************************************************
 #       Copyright (C) 2025 Samy Mekkati <samy.mekkati.1@ens.etsmtl.ca>
@@ -17,62 +17,44 @@ Hyperbolic Coxeter types.
 # ****************************************************************************
 
 from sage.combinat.root_system.coxeter_type import CoxeterType
-from sage.combinat.root_system.level2_hyperbolic_matrices import (level2_matrices)
+from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
+from sage.combinat.root_system.level2_hyperbolic_matrices import level2_matrices
 
-
-class CoxeterType_Level2_Hyperbolic(CoxeterType):
+class CoxeterType_Level2(CoxeterType):
     r"""
-    Hyperbolic level 2 Coxeter type
+    Hyperbolic level 2 Coxeter type.
     """
     def __init__(self, data):
-
-        if data[0] in ["K4", "K4dK2", "K23", "C", "T", "Ct", "Cktt", "Ckt2", "CC"]:
-            self._position = tuple(data[2])
-
-        else:
-            self._category = data[0]
-            self._size = data[1]
-            self._position = (data[2])
-
-            if (self._category, self._size, self._position) in level2_matrices:
-                self._position = level2_matrices[(self._category, self._size, self._position)]
+        self._key = tuple(data)
 
         super().__init__()
 
     def rank(self):
-
-        return level2_matrices[self._position].rank()
+        return len(level2_matrices[self._key])
 
     def coxeter_matrix(self):
-
-        return level2_matrices[self._position]
+        return CoxeterMatrix(level2_matrices[self._key])
 
     def coxeter_graph(self):
-
         return self.coxeter_matrix().coxeter_graph()
 
     def is_hyperbolic(self):
-
-        return True
+        return False
 
     def index_set(self):
-
         return self.coxeter_matrix().index_set()
 
     def is_affine(self):
-
         return False
 
     def is_finite(self):
         return False
 
     def is_crystallographic(self):
-
         return self.coxeter_matrix().is_crystallographic()
 
     def __eq__(self, other):
-
-        if isinstance(other, CoxeterType_Level2Hyperbolic):
-            if self.coxeter_matrix() == other.coxeter_matrix():
-                return True
-        return False
+        return (
+            isinstance(other, CoxeterType_Level2)
+            and self.coxeter_matrix() == other.coxeter_matrix()
+        )
