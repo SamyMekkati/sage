@@ -708,9 +708,9 @@ class Polyhedron_base5(Polyhedron_base4):
 
         occupation_vectors = [sum(weights[i] * vector(lineup[i]) for i in range(r)) for lineup in lineups]
 
-        base_ring = find_base_ring(self.base_ring(), occupation_vectors)
+        base_ring, convert = find_base_ring(QQ, vertices = occupation_vectors)
         parent = self.parent().change_ring(base_ring, ambient_dim=self.ambient_dim())
-        return parent.element_class(parent, [occupation_vectors, [], []], None)
+        return parent([occupation_vectors, [], []], None)
 
     ###########################################################
     # Binary operations.

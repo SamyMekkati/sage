@@ -298,17 +298,18 @@ import sage.geometry.abc
 
 from sage.rings.integer_ring import ZZ
 
+from sage.misc.flatten import flatten
+from sage.structure.element import parent
+from sage.categories.fields import Fields
+from sage.categories.rings import Rings
+
 from .misc import _make_listlist, _common_length_of
 
 
 ########################################################################
-def find_base_ring(actual_base_ring, vertices, rays, lines, ieqs, eqns, got_Vrep=False, got_Hrep=False):
-    from sage.misc.flatten import flatten
-    from sage.structure.element import parent
-    from sage.categories.fields import Fields
-    from sage.categories.rings import Rings
+def find_base_ring(actual_base_ring, vertices=None, rays=None, lines=None, ieqs=None, eqns=None, got_Vrep=False, got_Hrep=False):
 
-    values = flatten(actual_base_ring, vertices + rays + lines + ieqs + eqns)
+    values = flatten((vertices if vertices else []) + (rays if rays else []) + (lines if lines else []) + (ieqs if ieqs else []) + (eqns if eqns else []))
     if actual_base_ring is not None:
         convert = any(parent(x) is not actual_base_ring for x in values)
     elif not values:
@@ -360,7 +361,7 @@ def find_base_ring(actual_base_ring, vertices, rays, lines, ieqs, eqns, got_Vrep
                 convert = True
             elif actual_base_ring is not RDF:
                 raise ValueError("the only allowed inexact ring is 'RDF' with backend 'cdd'")
-        return actual_base_ring, convert
+    return actual_base_ring, convert
 
 
 #########################################################################
