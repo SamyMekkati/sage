@@ -46,11 +46,22 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
             sage: CoxeterType(['A',3])
             Coxeter type of ['A', 3]
         """
+        level2_prefix = ("K4", "K4dK2", "K23", "Cy", "T", "Ct", "Cktt", "Ckt2", "CC")
+
         if len(x) == 1:
             x = x[0]
 
         if isinstance(x, CoxeterType):
             return x
+        
+        if isinstance(x, (list, tuple)):
+            if x[0] in hyperbolic_prefix:
+                from sage.combinat.root_system.type_hyperbolic import CoxeterType_Hyperbolic
+                return CoxeterType_Hyperbolic(x)
+
+            elif x[0] in level2_prefix:
+                from sage.combinat.root_system.type_level2 import CoxeterType_Level2
+                return CoxeterType_Level2(x)
 
         try:
             return CoxeterTypeFromCartanType(CartanType(x))
